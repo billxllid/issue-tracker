@@ -42,6 +42,7 @@ const NewIssuePage = () => {
       setError("Something went wrong.");
     }
   };
+
   return (
     <div className="max-w-xl">
       {error && (
