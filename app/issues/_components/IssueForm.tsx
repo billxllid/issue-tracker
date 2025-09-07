@@ -39,7 +39,9 @@ const IssueForm = ({ initialValues }: { initialValues?: Issue }) => {
   const onSubmit = async (data: IssueFormData) => {
     try {
       setIsSubmitting(true);
-      await axios.post("/api/issues", data);
+      if (initialValues)
+        await axios.patch(`/api/issues/${initialValues.id}`, data);
+      else await axios.post("/api/issues", data);
       router.push("/issues");
     } catch (error) {
       setIsSubmitting(false);
@@ -69,7 +71,7 @@ const IssueForm = ({ initialValues }: { initialValues?: Issue }) => {
         />
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
         <Button disabled={isSubmitting}>
-          Submit New Issue
+          {initialValues ? "Update Issue" : "Submit New Issue"}{" "}
           {isSubmitting && <Spinner />}
         </Button>
       </form>
