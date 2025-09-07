@@ -43,6 +43,7 @@ const IssueForm = ({ initialValues }: { initialValues?: Issue }) => {
         await axios.patch(`/api/issues/${initialValues.id}`, data);
       else await axios.post("/api/issues", data);
       router.push("/issues");
+      router.refresh();
     } catch (error) {
       setIsSubmitting(false);
       setError("Something went wrong.");
