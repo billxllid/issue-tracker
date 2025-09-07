@@ -1,6 +1,6 @@
-import IssueForm from "../../_components/IssueForm";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import EditIssueClient from "./EditIssueClient";
 
 const EditIssuePage = async ({
   params,
@@ -17,7 +17,7 @@ const EditIssuePage = async ({
     notFound();
   }
 
-  return <IssueForm initialValues={issue} />;
+  return <EditIssueClient issue={issue} />;
 };
 
 export default EditIssuePage;
