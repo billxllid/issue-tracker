@@ -10,17 +10,13 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/validationSchemas";
 import { z } from "zod";
-import ErrorMessage from "@/app/components/ErrorMessage";
-import Spinner from "@/app/components/Spinner";
-import delay from "delay";
+import { ErrorMessage, Spinner } from "@/app/components";
 
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
 type IssueForm = z.infer<typeof createIssueSchema>;
-
-await delay(2000);
 
 const NewIssuePage = () => {
   const router = useRouter();
