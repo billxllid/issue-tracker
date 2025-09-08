@@ -1,4 +1,4 @@
-import { Status, Issue } from "@/app/generated/prisma";
+import { Status } from "@/app/generated/prisma";
 import { Badge } from "@radix-ui/themes";
 import React from "react";
 
