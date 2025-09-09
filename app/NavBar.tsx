@@ -8,25 +8,29 @@ import { useSession } from "next-auth/react";
 import {
   Avatar,
   Box,
+  Button,
   Container,
   DropdownMenu,
   Flex,
   Text,
 } from "@radix-ui/themes";
 import Spinner from "./components/Spinner";
+import Skeleton from "./components/Skeleton";
 
 const NavBar = () => {
   return (
     <nav className="border-b border-b-neutral-300 mb-5 px-5 py-4">
       <Container>
         <Flex justify="between">
-          <Flex align="center" gap="5">
+          <Flex align="center" gap="5" className="py-1">
             <Link href="/">
               <AiFillBug />
             </Link>
             <NavLinks />
           </Flex>
-          <AuthStatus />
+          <Flex align="center">
+            <AuthStatus />
+          </Flex>
         </Flex>
       </Container>
     </nav>
@@ -49,10 +53,6 @@ const NavLinks = () => {
               "!text-zinc-900":
                 currentPath === link.href ||
                 (link.href !== "/" && currentPath.startsWith(link.href)),
-              // "text-zinc-500": !(
-              //   currentPath === link.href ||
-              //   (link.href !== "/" && currentPath.startsWith(link.href))
-              // ),
             })}
             href={link.href}
           >
@@ -67,7 +67,7 @@ const NavLinks = () => {
 const AuthStatus = () => {
   const { status, data: session } = useSession();
 
-  if (status === "loading") return <Spinner />;
+  if (status === "loading") return <Skeleton width="3rem" />;
   if (status === "unauthenticated")
     return (
       <Link href="/api/auth/signin" className="nav-link">
@@ -76,28 +76,28 @@ const AuthStatus = () => {
     );
 
   return (
-    <Box>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          <Avatar
-            src={session!.user!.image!}
-            fallback="?"
-            size="2"
-            radius="full"
-            className="cursor-pointer"
-          />
-        </DropdownMenu.Trigger>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <Avatar
+          src={session!.user!.image!}
+          fallback="?"
+          size="2"
+          radius="full"
+          className="cursor-pointer"
+        />
+      </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content>
-          <DropdownMenu.Label>
-            <Text size="2">{session!.user!.email!}</Text>
-          </DropdownMenu.Label>
-          <DropdownMenu.Item>
-            <Link href="/api/auth/signout">Logout</Link>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    </Box>
+      <DropdownMenu.Content>
+        <DropdownMenu.Label>
+          <Text size="2">{session!.user!.email!}</Text>
+        </DropdownMenu.Label>
+        <DropdownMenu.Item asChild>
+          <Link href="/api/auth/signout" style={{ cursor: "pointer" }}>
+            Logout
+          </Link>
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   );
 };
 
