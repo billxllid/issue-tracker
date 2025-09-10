@@ -10,8 +10,18 @@ import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 const IssuesPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: Status; orderBy?: keyof Issue }>;
+  searchParams: Promise<{
+    status?: Status;
+    orderBy?: keyof Issue;
+    orderDirection?: "asc" | "desc";
+  }>;
 }) => {
+  const columns: { label: string; key: keyof Issue; className?: string }[] = [
+    { label: "Issue", key: "title" },
+    { label: "Status", key: "status", className: "hidden md:table-cell" },
+    { label: "Created", key: "createdAt", className: "hidden md:table-cell" },
+    { label: "Updated", key: "updatedAt", className: "hidden md:table-cell" },
+  ];
   // wait for the search params to be resolved
   const params = await searchParams;
   // check if the status is a valid status
@@ -19,18 +29,20 @@ const IssuesPage = async ({
     ? (params.status as Status)
     : undefined;
 
+  const orderBy = columns
+    .map((column) => column.key)
+    .includes(params.orderBy as keyof Issue)
+    ? {
+        [params.orderBy as keyof Issue]:
+          params.orderDirection === "asc" ? "asc" : "desc",
+      }
+    : {};
   const issues = await prisma.issue.findMany({
     where: {
       status,
     },
+    orderBy,
   });
-
-  const columns: { label: string; key: keyof Issue; className?: string }[] = [
-    { label: "Issue", key: "title" },
-    { label: "Status", key: "status", className: "hidden md:table-cell" },
-    { label: "Created", key: "createdAt", className: "hidden md:table-cell" },
-    { label: "Updated", key: "updatedAt", className: "hidden md:table-cell" },
-  ];
 
   return (
     <div>
@@ -48,14 +60,19 @@ const IssuesPage = async ({
                     query: {
                       ...params,
                       orderBy: column.key,
+                      orderDirection:
+                        params.orderDirection === "asc" ? "desc" : "asc",
                     },
                   }}
                 >
                   {column.label}
                 </NextLink>
-                {params.orderBy === column.key && (
-                  <AiFillCaretDown className="inline-block" />
-                )}
+                {params.orderBy === column.key &&
+                  (params.orderDirection === "asc" ? (
+                    <AiFillCaretUp className="inline-block" />
+                  ) : (
+                    <AiFillCaretDown className="inline-block" />
+                  ))}
               </Table.ColumnHeaderCell>
             ))}
           </Table.Row>
