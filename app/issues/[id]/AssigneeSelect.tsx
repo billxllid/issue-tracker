@@ -7,10 +7,11 @@ import axios from "axios";
 
 const AssigneeSelect = () => {
   const [users, setUsers] = useState<User[]>([]);
+
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data } = await axios.get<User[]>("/api/users");
-      // const data = await fetch("/api/users").then<User[]>((res) => res.json());
+      // const { data } = await axios.get<User[]>("/api/users");
+      const data = await fetch("/api/users").then<User[]>((res) => res.json());
       setUsers(data);
     };
     fetchUsers();
