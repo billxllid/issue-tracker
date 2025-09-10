@@ -70,16 +70,13 @@ const AuthStatus = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        {/* <Avatar
+        <Avatar
           src={session!.user!.image!}
           fallback="?"
           size="2"
           radius="full"
           className="cursor-pointer"
-        /> */}
-        <Avatar fallback="?" radius="full" className="cursor-pointer">
-          <Image src={session!.user!.image!} alt="User avatar" />
-        </Avatar>
+        />
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content>
