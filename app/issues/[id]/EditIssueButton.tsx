@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@radix-ui/themes";
 import Link from "next/link";
 import { Pencil2Icon } from "@radix-ui/react-icons";
