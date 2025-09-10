@@ -9,16 +9,7 @@ import Skeleton from "@/app/components/Skeleton";
 import toast, { Toaster } from "react-hot-toast";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
-  const {
-    data: users,
-    error,
-    isLoading,
-  } = useQuery<User[]>({
-    queryKey: ["users"],
-    queryFn: () => axios.get("/api/users").then((res) => res.data),
-    staleTime: 60 * 1000, // 1 minute
-    retry: 3,
-  });
+  const { data: users, error, isLoading } = useUsers();
 
   if (error) return null;
   if (isLoading) return <Skeleton height="2rem" />;
@@ -59,5 +50,13 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     </>
   );
 };
+
+const useUsers = () =>
+  useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: () => axios.get("/api/users").then((res) => res.data),
+    staleTime: 600 * 1000, // 10 minute
+    retry: 3,
+  });
 
 export default AssigneeSelect;
