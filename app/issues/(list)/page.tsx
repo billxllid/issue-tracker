@@ -3,12 +3,14 @@ import { Table } from "@radix-ui/themes";
 import prisma from "@/lib/prisma";
 import { IssueStatusBadge, Link } from "@/app/components";
 import IssueActions from "./IssueActions";
-import { Status } from "@/app/generated/prisma/client";
+import { Issue, Status } from "@/app/generated/prisma/client";
+import NextLink from "next/link";
+import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 
 const IssuesPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: Status }>;
+  searchParams: Promise<{ status?: Status; orderBy?: keyof Issue }>;
 }) => {
   // wait for the search params to be resolved
   const params = await searchParams;
@@ -23,19 +25,39 @@ const IssuesPage = async ({
     },
   });
 
+  const columns: { label: string; key: keyof Issue; className?: string }[] = [
+    { label: "Issue", key: "title" },
+    { label: "Status", key: "status", className: "hidden md:table-cell" },
+    { label: "Created", key: "createdAt", className: "hidden md:table-cell" },
+    { label: "Updated", key: "updatedAt", className: "hidden md:table-cell" },
+  ];
+
   return (
     <div>
       <IssueActions />
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Issue</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Status
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Created
-            </Table.ColumnHeaderCell>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell
+                key={column.key}
+                className={column.className}
+              >
+                <NextLink
+                  href={{
+                    query: {
+                      ...params,
+                      orderBy: column.key,
+                    },
+                  }}
+                >
+                  {column.label}
+                </NextLink>
+                {params.orderBy === column.key && (
+                  <AiFillCaretDown className="inline-block" />
+                )}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -52,6 +74,9 @@ const IssuesPage = async ({
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
                 {issue.createdAt.toLocaleDateString()}
+              </Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                {issue.updatedAt.toLocaleDateString()}
               </Table.Cell>
             </Table.Row>
           ))}
