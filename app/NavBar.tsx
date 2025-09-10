@@ -5,17 +5,9 @@ import React from "react";
 import { AiFillBug } from "react-icons/ai";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
-import {
-  Avatar,
-  Box,
-  Button,
-  Container,
-  DropdownMenu,
-  Flex,
-  Text,
-} from "@radix-ui/themes";
-import Spinner from "./components/Spinner";
+import { Avatar, Container, DropdownMenu, Flex, Text } from "@radix-ui/themes";
 import Skeleton from "./components/Skeleton";
+import Image from "next/image";
 
 const NavBar = () => {
   return (
@@ -78,13 +70,16 @@ const AuthStatus = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <Avatar
+        {/* <Avatar
           src={session!.user!.image!}
           fallback="?"
           size="2"
           radius="full"
           className="cursor-pointer"
-        />
+        /> */}
+        <Avatar fallback="?" radius="full" className="cursor-pointer">
+          <Image src={session!.user!.image!} alt="User avatar" />
+        </Avatar>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content>
