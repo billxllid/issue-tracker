@@ -4,6 +4,7 @@ const prisma = new PrismaClient()
 
 async function main() {
   await prisma.issue.createMany({
+    skipDuplicates: true,
     data: [
       {
         title: "Login page loads too slowly",
@@ -146,7 +147,7 @@ async function main() {
         updatedAt: new Date("2025-08-15T10:50:00Z"),
       }
     ]
-  })
+  },)
 }
 
 main()
