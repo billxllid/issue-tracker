@@ -1,29 +1,16 @@
 import React from "react";
-import { Table } from "@radix-ui/themes";
 import prisma from "@/lib/prisma";
-import { IssueStatusBadge, Link, Pagination } from "@/app/components";
+import { Pagination } from "@/app/components";
 import IssueActions from "./IssueActions";
 import { Issue, Status } from "@/app/generated/prisma/client";
-import NextLink from "next/link";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import IssueTable, { columnsNames, IssueQueryParams } from "./IssueTable";
+import { Flex } from "@radix-ui/themes";
 
-const IssuesPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    status?: Status;
-    orderBy?: keyof Issue;
-    orderDirection?: "asc" | "desc";
-    page?: string;
-  }>;
-}) => {
-  // Columns
-  const columns: { label: string; key: keyof Issue; className?: string }[] = [
-    { label: "Issue", key: "title" },
-    { label: "Status", key: "status", className: "hidden md:table-cell" },
-    { label: "Created", key: "createdAt", className: "hidden md:table-cell" },
-    { label: "Updated", key: "updatedAt", className: "hidden md:table-cell" },
-  ];
+interface IssuesPageProps {
+  searchParams: Promise<IssueQueryParams>;
+}
+
+const IssuesPage = async ({ searchParams }: IssuesPageProps) => {
   // wait for the search params to be resolved
   const params = await searchParams;
   // check if the status is a valid status
@@ -32,9 +19,7 @@ const IssuesPage = async ({
     : undefined;
 
   // Order by
-  const orderBy = columns
-    .map((column) => column.key)
-    .includes(params.orderBy as keyof Issue)
+  const orderBy = columnsNames.includes(params.orderBy as keyof Issue)
     ? {
         [params.orderBy as keyof Issue]:
           params.orderDirection === "asc" ? "asc" : "desc",
@@ -63,67 +48,15 @@ const IssuesPage = async ({
   });
 
   return (
-    <div>
+    <Flex direction="column" gap="4">
       <IssueActions />
-      <Table.Root variant="surface">
-        <Table.Header>
-          <Table.Row>
-            {columns.map((column) => (
-              <Table.ColumnHeaderCell
-                key={column.key}
-                className={column.className}
-              >
-                <NextLink
-                  href={{
-                    query: {
-                      ...params,
-                      orderBy: column.key,
-                      orderDirection:
-                        params.orderDirection === "asc" ? "desc" : "asc",
-                    },
-                  }}
-                >
-                  {column.label}
-                </NextLink>
-                {params.orderBy === column.key &&
-                  (params.orderDirection === "asc" ? (
-                    <AiFillCaretUp className="inline-block" />
-                  ) : (
-                    <AiFillCaretDown className="inline-block" />
-                  ))}
-              </Table.ColumnHeaderCell>
-            ))}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {issues.map((issue) => (
-            <Table.Row key={issue.id}>
-              <Table.Cell>
-                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-                <div className="block md:hidden">
-                  <IssueStatusBadge status={issue.status} />
-                </div>
-              </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
-                <IssueStatusBadge status={issue.status} />
-              </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
-                {issue.createdAt.toLocaleDateString()}
-              </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">
-                {issue.updatedAt.toLocaleDateString()}
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+      <IssueTable issues={issues} searchParams={searchParams} />
       <Pagination
-        className="mt-5"
         currentPage={page}
         pageSize={pageSize}
         itemsCount={itemsCount}
       />
-    </div>
+    </Flex>
   );
 };
 

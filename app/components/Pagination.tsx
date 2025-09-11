@@ -14,15 +14,9 @@ interface PaginationProps {
   itemsCount: number;
   currentPage: number;
   pageSize: number;
-  className?: string;
 }
 
-const Pagination = ({
-  itemsCount,
-  currentPage,
-  pageSize,
-  className,
-}: PaginationProps) => {
+const Pagination = ({ itemsCount, currentPage, pageSize }: PaginationProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -52,7 +46,7 @@ const Pagination = ({
   if (lastPage === 0) return null;
 
   return (
-    <Flex align="center" gap="2" className={className}>
+    <Flex align="center" gap="2">
       <Text size="2" color="gray">
         Page {currentPage} of {lastPage}
       </Text>
