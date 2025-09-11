@@ -1,12 +1,16 @@
-"use client";
 import Pagination from "./components/Pagination";
-import { useSearchParams } from "next/navigation";
 
-export default function Home() {
-  const searchParams = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "1");
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const currentPage = parseInt(params.page || "1");
 
   return (
-    <Pagination currentPage={currentPage} pageSize={10} itemsCount={100} />
+    <div>
+      <Pagination currentPage={currentPage} pageSize={10} itemsCount={100} />
+    </div>
   );
 }

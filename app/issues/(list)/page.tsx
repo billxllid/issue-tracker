@@ -1,7 +1,7 @@
 import React from "react";
 import { Table } from "@radix-ui/themes";
 import prisma from "@/lib/prisma";
-import { IssueStatusBadge, Link } from "@/app/components";
+import { IssueStatusBadge, Link, Pagination } from "@/app/components";
 import IssueActions from "./IssueActions";
 import { Issue, Status } from "@/app/generated/prisma/client";
 import NextLink from "next/link";
@@ -14,8 +14,10 @@ const IssuesPage = async ({
     status?: Status;
     orderBy?: keyof Issue;
     orderDirection?: "asc" | "desc";
+    page?: string;
   }>;
 }) => {
+  // Columns
   const columns: { label: string; key: keyof Issue; className?: string }[] = [
     { label: "Issue", key: "title" },
     { label: "Status", key: "status", className: "hidden md:table-cell" },
@@ -29,6 +31,7 @@ const IssuesPage = async ({
     ? (params.status as Status)
     : undefined;
 
+  // Order by
   const orderBy = columns
     .map((column) => column.key)
     .includes(params.orderBy as keyof Issue)
@@ -37,11 +40,26 @@ const IssuesPage = async ({
           params.orderDirection === "asc" ? "asc" : "desc",
       }
     : {};
+
+  // Where
+  const where = {
+    status,
+  };
+
+  // Pagination
+  const page = parseInt(params.page || "1");
+  const pageSize = 5;
+  const itemsCount = await prisma.issue.count({
+    where,
+  });
+  const skip = (page - 1) * pageSize;
+
+  // Get the issues
   const issues = await prisma.issue.findMany({
-    where: {
-      status,
-    },
+    where,
     orderBy,
+    skip,
+    take: pageSize,
   });
 
   return (
@@ -99,6 +117,12 @@ const IssuesPage = async ({
           ))}
         </Table.Body>
       </Table.Root>
+      <Pagination
+        className="mt-5"
+        currentPage={page}
+        pageSize={pageSize}
+        itemsCount={itemsCount}
+      />
     </div>
   );
 };
