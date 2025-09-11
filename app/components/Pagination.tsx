@@ -8,20 +8,24 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface PaginationProps {
   itemsCount: number;
   currentPage: number;
   pageSize: number;
-  onPageChange: (page: number) => void;
 }
 
-const Pagination = ({
-  itemsCount,
-  currentPage,
-  pageSize,
-  onPageChange,
-}: PaginationProps) => {
+const Pagination = ({ itemsCount, currentPage, pageSize }: PaginationProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const changePage = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    router.push(`?${params.toString()}`);
+  };
+
   return (
     <Flex align="center" gap="2">
       <Text size="2" color="gray">
@@ -30,7 +34,7 @@ const Pagination = ({
       <Button
         color="gray"
         variant="soft"
-        onClick={() => onPageChange(1)}
+        onClick={() => changePage(1)}
         disabled={currentPage === 1 || itemsCount === 0}
       >
         <DoubleArrowLeftIcon />
@@ -38,7 +42,7 @@ const Pagination = ({
       <Button
         color="gray"
         variant="soft"
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => changePage(currentPage - 1)}
         disabled={currentPage === 1 || itemsCount === 0}
       >
         <ChevronLeftIcon />
@@ -46,7 +50,7 @@ const Pagination = ({
       <Button
         color="gray"
         variant="soft"
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => changePage(currentPage + 1)}
         disabled={
           currentPage === Math.ceil(itemsCount / pageSize) || itemsCount === 0
         }
@@ -56,7 +60,7 @@ const Pagination = ({
       <Button
         color="gray"
         variant="soft"
-        onClick={() => onPageChange(Math.ceil(itemsCount / pageSize))}
+        onClick={() => changePage(Math.ceil(itemsCount / pageSize))}
         disabled={
           currentPage === Math.ceil(itemsCount / pageSize) || itemsCount === 0
         }
