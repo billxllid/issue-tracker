@@ -17,10 +17,10 @@ const IssueSummery = ({ open, inProgress, closed }: Props) => {
   ];
 
   return (
-    <Flex gap="4">
+    <Flex gap="4" justify="between">
       {container.map((item) => (
-        <Card key={item.label} variant="surface">
-          <Flex direction="column" gap="1">
+        <Card key={item.label} variant="surface" className="w-full h-24">
+          <Flex direction="column" gap="4">
             <Link
               className="text-sm font-medium"
               href={`/issues?status=${item.status}`}
